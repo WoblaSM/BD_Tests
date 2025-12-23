@@ -4,7 +4,7 @@ import os
 
 
 # поменять путь к файлу на нужный если не работает так
-path_bd = r"/workspaces/BD_Tests/lesha_bd_3.db"
+path_bd = r"C:\Users\Xiaomi\source\repos\BD_Tests\lesha_bd_3.db"
 
 
 def update_database_from_excel(file_name, bd_name, table_name):
@@ -70,7 +70,7 @@ def check_tests(id):
     cur = conn.cursor()
     
     rows = cur.fetchall()
-
+    
     columns_komp = get_column_names(path_bd, "komp")
     columns_zavi = get_column_names(path_bd, "zavi")
     columns_test = get_column_names(path_bd, "tests")
@@ -89,16 +89,45 @@ def check_tests(id):
                 print("\t" + "\t" + "\t" + columns_zavi[i] + ": " + row[i])
     print("test_cases:")
     f_test(cur, mas_zav, id)
+def check_id(id):
+    conn = sqlite3.connect(path_bd)
+    cur = conn.cursor()
+    cur.execute("SELECT EXISTS(SELECT 1 FROM komp WHERE id = ?)", (id,))
+    exists = cur.fetchone()[0]
     
-    
+    conn.close()
+    return bool(exists)
+
+
 
 # update_database_from_excel(r"C:\Users\Xiaomi\OneDrive\Рабочий стол\леша_бд\компонетны.csv", path_bd, "komp")
 # update_database_from_excel(r"C:\Users\Xiaomi\OneDrive\Рабочий стол\леша_бд\2_зависимости.csv", path_bd,"zavi")
 # update_database_from_excel(r"C:\Users\Xiaomi\OneDrive\Рабочий стол\леша_бд\test_case.csv", path_bd,"tests")
+print("write 'help' to get a list of commands")
 while True:
-    print("write ID:")
-    inp = input()
-    if inp == "1":
+    com = input("write command: ")
+    if com == "id":
+        while True:
+            inp = input("write ID: ")
+            if check_id(inp):
+                # print("all right")
+                check_tests(inp)
+                break
+            elif inp == "break":
+                break
+            else:
+                print("no such id")
+        
+    elif com == "help":
+        print("id, example: 'С01'")
+        print("help")
+        print("break")
+
+    elif com == "break":
         break
-    check_tests(inp)
+    else:
+        print("no such command")
+        print("write 'help' to get a list of commands")
+
+
 
