@@ -3,17 +3,13 @@ import csv
 import os
 
 
-# поменять путь к файлу на нужный если не работает так, а если работает то сосать член
+# поменять путь к файлу на нужный если не работает так
 path_bd = r"/workspaces/BD_Tests/lesha_bd_3.db"
 
-# Создаем индекс для столбца "email"
 
-#    zavisimosty.db 
 def update_database_from_excel(file_name, bd_name, table_name):
     connection = sqlite3.connect(bd_name)
     cursor = connection.cursor()
-    # table_name = os.path.splitext(os.path.basename(bd_name))[0]
-    #cursor.execute(f"DROP TABLE IF EXISTS {bd_name}")
     connection.commit()
     
     file_path = f"{file_name}"
@@ -34,8 +30,6 @@ def update_database_from_excel(file_name, bd_name, table_name):
         ''')
         connection.commit()
         print("file=done")
-        
-        # next(csv_reader)
         for row in csv_reader:
             rspl = "".join(row).split(";")
             cursor.execute(f'INSERT INTO {table_name} ({row_names[0]}, {row_names[1]}, {row_names[2]}, {row_names[3]}, {row_names[4]}) VALUES(?, ?, ?, ?, ?)', (rspl[0], rspl[1], rspl[2], rspl[3], rspl[4]))
@@ -69,7 +63,8 @@ def f_test(cur, mas_zav, ids):
                         print("\t \t test_id: " + row[0])
                         print("\t \t \t test_info:" + ", ".join(row))
                         tests.append(row[0])
-            # print(test)
+
+
 def check_tests(id):
     conn = sqlite3.connect(path_bd)
     cur = conn.cursor()
@@ -106,13 +101,4 @@ while True:
     if inp == "1":
         break
     check_tests(inp)
-
- 
-
-# update_database_from_excel(r"C:\Users\Xiaomi\OneDrive\Рабочий стол\леша_бд\компонетны.csv", "komponent.db")
-
-#cursor.execute('INSERT INTO Зависимости2 (from_id, to_id, type, Discovered_by_way, Business_meaning) VALUES(?, ?, ?, ?, ?)', ('С02', 'С04', 'API_Вызов', 'Анализ Swagger', 'Для отправки заявки на проверку'))
-
-
-# Сохраняем изменения и закрываем соединение
 
