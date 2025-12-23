@@ -2,9 +2,10 @@ import sqlite3
 import csv
 import os
 
-
 # поменять путь к файлу на нужный если не работает так
 path_bd = r"C:\Users\Xiaomi\source\repos\BD_Tests\lesha_bd_3.db"
+
+called_ids = []
 
 
 def update_database_from_excel(file_name, bd_name, table_name):
@@ -89,6 +90,7 @@ def check_tests(id):
                 print("\t" + "\t" + "\t" + columns_zavi[i] + ": " + row[i])
     print("test_cases:")
     f_test(cur, mas_zav, id)
+    
 def check_id(id):
     conn = sqlite3.connect(path_bd)
     cur = conn.cursor()
@@ -98,6 +100,25 @@ def check_id(id):
     conn.close()
     return bool(exists)
 
+def show_called_ids():
+    """Вывести все ID, которые были вызваны в текущей сессии"""
+    if not called_ids:
+        print("\nНи одного ID еще не было вызвано.")
+        return
+    
+    print("\n=== ВСЕ ВЫЗВАННЫЕ ID В ЭТОЙ СЕССИИ ===")
+    print(f"Всего вызвано ID: {len(called_ids)}")
+    print("Список вызванных ID:")
+    
+    for i, id_name in enumerate(called_ids, 1):
+        print("\t" + "\t" + f"{i}. {id_name}")
+    
+    unique_ids = set(called_ids)
+    if len(unique_ids) < len(called_ids):
+        print(f"\nУникальных ID: {len(unique_ids)}")
+        print("Список уникальных ID:")
+        for i, id_name in enumerate(sorted(unique_ids), 1):
+            print(f"       {i}. {id_name}")
 
 
 # update_database_from_excel(r"C:\Users\Xiaomi\OneDrive\Рабочий стол\леша_бд\компонетны.csv", path_bd, "komp")
@@ -110,7 +131,7 @@ while True:
         while True:
             inp = input("write ID: ")
             if check_id(inp):
-                # print("all right")
+                called_ids.append(inp)
                 check_tests(inp)
                 break
             elif inp == "break":
@@ -120,14 +141,15 @@ while True:
         
     elif com == "help":
         print("id, example: 'С01'")
-        print("help")
-        print("break")
+        print("history - show all called IDs")
+        print("help - list of all commands")
+        print("break - stop the current process")
 
+    elif com == "history":
+        show_called_ids()
+        
     elif com == "break":
         break
     else:
         print("no such command")
         print("write 'help' to get a list of commands")
-
-
-
